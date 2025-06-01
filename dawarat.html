@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دورات معلم مصطفى</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .admin-controls {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .add-course-btn {
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .courses-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .course-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px) rotateY(5deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .course-image {
+            width: 100%;
+            height: 180px;
+            background: #f1f1f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: #666;
+        }
+
+        .course-details {
+            padding: 20px;
+        }
+
+        .course-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .course-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #25D366;
+            margin-bottom: 15px;
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .buy-btn {
+            flex: 1;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .admin-actions {
+            display: none;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            gap: 5px;
+        }
+
+        .edit-btn, .delete-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            transform-style: preserve-3d;
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                transform: translateY(-50px) rotateX(30deg);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) rotateX(0);
+                opacity: 1;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .save-btn, .cancel-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background: #25D366;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .courses-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-tools"></i>
+            </div>
+            <h1>دورات معلم مصطفى</h1>
+        </div>
+        <a href="index.html" style="color: #333; text-decoration: none;">
+            <i class="fas fa-home"></i>
+        </a>
+    </div>
+
+    <div class="admin-controls" id="adminControls">
+        <button class="add-course-btn" onclick="showAddCourseModal()">
+            <i class="fas fa-plus"></i>
+            إضافة دورة جديدة
+        </button>
+    </div>
+
+    <div class="courses-container" id="coursesContainer">
+        <!-- سيتم ملؤها بالدورات من localStorage -->
+    </div>
+
+    <!-- Modal لإضافة/تعديل دورة -->
+    <div class="modal" id="courseModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">إضافة دورة جديدة</h2>
+            <form id="courseForm">
+                <input type="hidden" id="courseId">
+                <div class="form-group">
+                    <label for="courseTitle">عنوان الدورة</label>
+                    <input type="text" id="courseTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="coursePrice">السعر (درهم)</label>
+                    <input type="number" id="coursePrice" required>
+                </div>
+                <div class="form-group">
+                    <label for="courseImage">رابط الصورة (URL)</label>
+                    <input type="text" id="courseImage" required>
+                </div>
+                <div class="form-group">
+                    <label for="courseVideo">رابط الفيديو (URL)</label>
+                    <input type="text" id="courseVideo">
+                </div>
+                <div class="form-group">
+                    <label for="courseDesc">وصف الدورة</label>
+                    <textarea id="courseDesc" rows="4"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn" onclick="hideModal()">إلغاء</button>
+                    <button type="submit" class="save-btn">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // التحقق من صلاحيات المدير
+        const urlParams = new URLSearchParams(window.location.search);
+        const isAdmin = urlParams.get('admin') === '1234';
+        
+        if (isAdmin) {
+            document.getElementById('adminControls').style.display = 'block';
+        }
+
+        // بيانات الدورات
+        let courses = JSON.parse(localStorage.getItem('courses')) || [];
+
+        // عرض الدورات
+        function renderCourses() {
+            const container = document.getElementById('coursesContainer');
+            container.innerHTML = '';
+            
+            courses.forEach((course, index) => {
+                const card = document.createElement('div');
+                card.className = 'course-card';
+                card.innerHTML = `
+                    <div class="course-image">
+                        ${course.image ? `<img src="${course.image}" alt="${course.title}" style="width:100%;height:100%;object-fit:cover;">` : 
+                        `<i class="fas fa-video"></i>`}
+                    </div>
+                    <div class="course-details">
+                        <h3 class="course-title">${course.title}</h3>
+                        <div class="course-price">${course.price} درهم</div>
+                        <p>${course.desc || ''}</p>
+                        <div class="course-actions">
+                            <button class="buy-btn" onclick="contactWhatsApp('${course.title}')">
+                                <i class="fab fa-whatsapp"></i> شراء الدورة
+                            </button>
+                        </div>
+                        ${isAdmin ? `
+                        <div class="admin-actions">
+                            <button class="edit-btn" onclick="editCourse(${index})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-btn" onclick="deleteCourse(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                if (isAdmin) {
+                    const adminActions = card.querySelector('.admin-actions');
+                    adminActions.style.display = 'flex';
+                    
+                    card.addEventListener('mouseenter', () => {
+                        adminActions.style.display = 'flex';
+                    });
+                    
+                    card.addEventListener('mouseleave', () => {
+                        adminActions.style.display = 'flex';
+                    });
+                }
+                
+                container.appendChild(card);
+            });
+        }
+
+        // إظهار نموذج إضافة دورة
+        function showAddCourseModal() {
+            document.getElementById('modalTitle').textContent = 'إضافة دورة جديدة';
+            document.getElementById('courseForm').reset();
+            document.getElementById('courseId').value = '';
+            document.getElementById('courseModal').style.display = 'flex';
+        }
+
+        // إظهار نموذج تعديل دورة
+        function editCourse(index) {
+            const course = courses[index];
+            document.getElementById('modalTitle').textContent = 'تعديل الدورة';
+            document.getElementById('courseId').value = index;
+            document.getElementById('courseTitle').value = course.title;
+            document.getElementById('coursePrice').value = course.price;
+            document.getElementById('courseImage').value = course.image || '';
+            document.getElementById('courseVideo').value = course.video || '';
+            document.getElementById('courseDesc').value = course.desc || '';
+            document.getElementById('courseModal').style.display = 'flex';
+        }
+
+        // حذف دورة
+        function deleteCourse(index) {
+            if (confirm('هل أنت متأكد من حذف هذه الدورة؟')) {
+                courses.splice(index, 1);
+                localStorage.setItem('courses', JSON.stringify(courses));
+                renderCourses();
+            }
+        }
+
+        // إخفاء النموذج
+        function hideModal() {
+            document.getElementById('courseModal').style.display = 'none';
+        }
+
+        // حفظ الدورة
+        document.getElementById('courseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const courseData = {
+                title: document.getElementById('courseTitle').value,
+                price: document.getElementById('coursePrice').value,
+                image: document.getElementById('courseImage').value,
+                video: document.getElementById('courseVideo').value,
+                desc: document.getElementById('courseDesc').value
+            };
+            
+            const courseId = document.getElementById('courseId').value;
+            
+            if (courseId === '') {
+                // إضافة دورة جديدة
+                courses.push(courseData);
+            } else {
+                // تعديل دورة موجودة
+                courses[courseId] = courseData;
+            }
+            
+            localStorage.setItem('courses', JSON.stringify(courses));
+            renderCourses();
+            hideModal();
+        });
+
+        // التواصل عبر واتساب
+        function contactWhatsApp(courseTitle) {
+            const message = `مرحبا، أنا مهتم بدورة "${courseTitle}"، أريد المزيد من المعلومات`;
+            const whatsappUrl = `https://wa.me/+212600000000?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // التحميل الأولي للصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCourses();
+            
+            // إذا كان مديراً، أظهر أزرار التحكم
+            if (isAdmin) {
+                document.querySelectorAll('.admin-actions').forEach(actions => {
+                    actions.style.display = 'flex';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
